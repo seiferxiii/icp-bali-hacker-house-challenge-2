@@ -1,14 +1,20 @@
 import { useState } from 'react';
 
 function App() {
-  const [greeting, setGreeting] = useState('');
+  const [todo, setTodo] = useState(null as any)
 
   function handleSubmit(event: any) {
     event.preventDefault();
-    const name = event.target.elements.name.value;
-    fetch(`${import.meta.env.VITE_CANISTER_URL}/greet?name=${name}`)
+    const taskId = event.target.elements.taskid.value;
+    fetch(`${import.meta.env.VITE_CANISTER_URL}/todos`,{
+      method: 'POST',
+      headers:{
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({id: taskId})
+    })
       .then(response => response.json()).then((json) => {
-        setGreeting(json.greeting)
+        setTodo(json)
       });
   }
 
@@ -18,11 +24,11 @@ function App() {
       <br />
       <br />
       <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
+        <label htmlFor="taskid">Enter Task ID: &nbsp;</label>
+        <input id="taskid" alt="Task ID" type="text" />
+        <button type="submit">Fetch Task</button>
       </form>
-      <section id="greeting">{greeting}</section>
+      <section id="greeting">{todo && todo.title}</section>
     </main >
   );
 }
